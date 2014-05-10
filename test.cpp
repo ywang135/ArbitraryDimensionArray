@@ -85,13 +85,13 @@ void test2(){
     a[1][0][0] = 110;
     a[1][0][1] = 101;
     a[0][0][1] = 1;
-    /*
-     try{
-     a[0][3][0] = 1; // Out of range, throws.
-     }
-     catch(exception& e){
-     cout << "meet exception: "<< e.what()<<endl;
-     }*/
+    
+    try{
+        a[0][3][0] = 1; // Out of range, throws.
+    }
+    catch(exception& e){
+        cout << "Exception: "<< e.what()<<endl;
+    }
     
     a = a; // Self-assignment must be a no-op.
     b = a; // Okay, as long as dimensions and type match exactly.
@@ -108,17 +108,18 @@ void test2(){
     // auto to simplify.)
     
     for (auto it = b.fmbegin(); it != b.fmend(); ++it) {
-        cout << *it << " <";
+        cout << *it << "    <";
         it.printDim();
         cout <<">\n";
         i++;
-        if(i>25)
-            break;
     }
     cout << endl;
     // Iterate through in column major order.
     for (auto it = b.lmbegin(); it != b.lmend(); ++it) {
-        cout << *it << " ";
+        cout << *it << "    <";
+        it.printDim();
+        cout <<">\n";
+        i++;
     }
     cout << endl;
 }
@@ -136,15 +137,7 @@ void test3(){
     a[1][1][1] = 9;
     a[1][2][0] = 10;
     a[1][2][1] = 11;
-    int i=0;
-    for(auto it = a.fmbegin(); it != a.fmend(); ++it){
-        assert(*it == i);
-        /*cout << *it << " ";
-        it.printDim();
-        cout << "\n";*/
-        i++;
-         
-    }
+    
     b[0][0][0] = 0;
     b[1][0][0] = 1;
     b[0][1][0] = 2;
@@ -157,15 +150,18 @@ void test3(){
     b[1][1][1] = 9;
     b[0][2][1] = 10;
     b[1][2][1] = 11;
+    int i=0;
+    for(auto it = a.fmbegin(); it != a.fmend(); ++it){
+        assert(*it == i);
+        i++;
+         
+    }
+    
     i=0;
     for(auto it = b.lmbegin(); it != b.lmend(); ++it){
         assert(*it == i);
-       /* cout << *it << " ";
-         it.printDim();
-         cout << "\n";*/
         i++;
     }
-    
 }
 int main(){
     test0();

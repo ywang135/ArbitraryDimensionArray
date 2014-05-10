@@ -50,7 +50,7 @@ public:
         if(D<=0){
             throwOutOfRangeException();
         }
-        size = D;
+        static_assert(D>0, "dimension is not positive");
         arr = new Array<T, Dims...>[D];
     }
     Array(const Array & array): ValueType(array.ValueType), dimSize(sizeof...(Dims)), size(D){
@@ -359,9 +359,7 @@ public:
         if(debug){
             std::cout<<"allocate array ["<<dimSize<<"]\n";
         }
-        if(D<=0){
-            throwOutOfRangeException();
-        }
+        static_assert(D>0, "dimension is not positive");
         arr = new T[D];
     }
     Array(const Array & array): ValueType(typeid(T)), dimSize(0), size(D){
