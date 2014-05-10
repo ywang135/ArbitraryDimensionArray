@@ -21,6 +21,14 @@ void test0(){
         assert(*it == i);
         i++;
     }
+    cs540::Array<int, 1> b;
+    i=0;
+    b[0] = 10;
+    for (auto it = b.lmbegin(); it != b.lmend(); ++it) {
+        assert(*it == 10);
+        i++;
+    }
+    assert(i == 1);
 }
 void test1() {
     cout << "test 1: "<< endl;
@@ -34,30 +42,18 @@ void test1() {
     b[1] = 'c';
     cs540::Array<char, 2> c(b);
     cout << c[1]<<endl;
-    cs540::Array<int, 2, 3> d(a);
-    cout << d[1].ValueType.name()<<": "<<d[1][1]<<endl;
     //cout << typeid(a[1][1]).name()<<endl;
     //cout<< a[1][2][3];
     //cs540::ArrayArray<int> *c = &((*b)[1]);
     //(*c)[1];
     a[0][0] = 100;
     a[0][1] = 123;
-    /*
-     auto iter = a.fmbegin();
-     
-     cout << *iter<< endl;
-     *iter = 111;
-     cout << a[0][0]<< endl;
-     ++iter;
-     cout << *iter<<" "<<a[0][1] << endl;
-     
-     auto iter1 = a.fmbegin();
-     cout << *(iter1++) << endl;
-     cout << *iter1 << endl;
-     */
+    cs540::Array<int, 2, 3> d = a;
+    d[0][0] = 999;
+    assert(d[0][0]!=a[0][0]);
     auto iter1 = a.fmbegin();
     auto iter2 = a.fmend();
-    cout << (iter1 == iter2) << endl<<endl;
+    assert (iter1 != iter2);
     for(auto iter3=a.fmbegin(); iter3!=a.fmend(); iter3++){
         cout << *iter3 <<" ";
     }
@@ -66,6 +62,9 @@ void test1() {
         cout << *iter3 <<" ";
     }
     cout << endl;
+    for(auto iter3=d.fmbegin(); iter3!=d.fmend(); iter3++){
+        cout << *iter3 <<" ";
+    }
 }
 void test2(){
     cout << "test 2: "<< endl;
