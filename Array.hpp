@@ -46,7 +46,6 @@ public:
     class ConstLastDimensionMajorIterator;
     template<typename U, size_t D1, size_t... DDims>
     friend class Array;
-    friend class Array<T, Dims...>;
     friend class Array<T, D, Dims...>:: FirstDimensionMajorIterator;
     friend class Array<T, D, Dims...>:: LastDimensionMajorIterator;
     friend class Array<T, D, Dims...>:: ConstFirstDimensionMajorIterator;
