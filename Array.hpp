@@ -36,14 +36,14 @@ void throwWrongTemplateException(){
 template<typename T, size_t D, size_t... Dims>
 class Array{
 public:
-    const std::type_info& ValueType;
+    typedef T ValueType;
     Array<T, Dims...>* arr;
     size_t dimSize;
     size_t size;
     
 public:
     friend class Array<T , Dims...>;
-    Array(): ValueType(typeid(T)), arr(nullptr), dimSize(sizeof...(Dims)), size(D){
+    Array(): arr(nullptr), dimSize(sizeof...(Dims)), size(D){
         if(debug){
             std::cout<<"allocate array\n";
         }
@@ -53,9 +53,9 @@ public:
         static_assert(D>0, "dimension is not positive");
         arr = new Array<T, Dims...>[D];
     }
-    Array(const Array & array): ValueType(array.ValueType), dimSize(sizeof...(Dims)), size(D){
+    Array(const Array & array): dimSize(sizeof...(Dims)), size(D){
         size_t i;
-        if(ValueType != array.ValueType || dimSize != array.dimSize || size != array.size){
+        if(dimSize != array.dimSize || size != array.size){
             throwWrongTemplateException();
         }
         arr = new Array<T, Dims...>[size];
@@ -64,11 +64,12 @@ public:
         }
     }
     template <typename U>
-    Array(const Array<U, D, Dims...> & array): ValueType(array.ValueType), dimSize(sizeof...(Dims)), size(D){
+    Array(const Array<U, D, Dims...> & array): dimSize(sizeof...(Dims)), size(D){
         size_t i;
-        arr = new Array<U, Dims...>[size];
+        arr = new Array<T, Dims...>[size];
         for(i=0; i< size; i++){
-            arr[i] = new Array<U, Dims...>(array.arr[i]);
+            Array<U, Dims...> * tmp = new Array<U, Dims...>(array.arr[i]);
+            arr[i] = *tmp;
         }
     }
     Array &operator=(const Array &array){
@@ -349,22 +350,22 @@ public:
 template<typename T, size_t D>
 class Array<T, D>{
 public:
-    const std::type_info& ValueType;
+    typedef T ValueType;
     T* arr;
     size_t dimSize;
     size_t size;
     
 public:
-    Array(): ValueType(typeid(T)),arr(nullptr), dimSize(0), size(D){
+    Array(): arr(nullptr), dimSize(0), size(D){
         if(debug){
             std::cout<<"allocate array ["<<dimSize<<"]\n";
         }
         static_assert(D>0, "dimension is not positive");
         arr = new T[D];
     }
-    Array(const Array & array): ValueType(typeid(T)), dimSize(0), size(D){
+    Array(const Array & array): dimSize(0), size(D){
         size_t i;
-        if(ValueType != array.ValueType || dimSize != array.dimSize || size != array.size){
+        if(dimSize != array.dimSize || size != array.size){
             throwWrongTemplateException();
         }
         
@@ -374,9 +375,9 @@ public:
         }
     }
     template <typename U>
-    Array(const Array<U, D> & array): ValueType(array.ValueType), dimSize(0), size(D){
+    Array(const Array<U, D> & array): dimSize(0), size(D){
         size_t i;
-        arr = new U[D];
+        arr = new T[D];
         for(i=0; i< size; i++){
             arr[i] = array.arr[i];
         }
@@ -521,7 +522,7 @@ public:
         LastDimensionMajorIterator():size(D),curdims(0), isEnd(false) { }
         LastDimensionMajorIterator(const LastDimensionMajorIterator & lmi): arr(lmi.arr)
         , elem(lmi.elem)
-        , size(0)
+        , size(D)
         , curdims(lmi.curdims)
         , isEnd(lmi.isEnd){ }
         LastDimensionMajorIterator &
@@ -537,18 +538,33 @@ public:
         friend bool operator==(const LastDimensionMajorIterator & fmi1,
                                const LastDimensionMajorIterator &fmi2){
             if(fmi1.arr!=fmi2.arr){
+                if(debug){
+                    std::cout<<"!= break: 1\n";
+                }
                 return false;
             }
             if(fmi1.size!=fmi2.size){
+                if(debug){
+                    std::cout<<"!= break: 2: "<< fmi1.size<<"!= "<<fmi2.size<<"\n";
+                }
                 return false;
             }
             if(fmi1.curdims!=fmi2.curdims){
+                if(debug){
+                    std::cout<<"!= break: 3\n";
+                }
                 return false;
             }
             if(fmi1.isEnd != fmi2.isEnd){
+                if(debug){
+                    std::cout<<"!= break: 4\n";
+                }
                 return false;
             }
             if(fmi1.isEnd){
+                if(debug){
+                    std::cout<<"!= break: 5\n";
+                }
                 return true;
             }
             return fmi1.elem == fmi2.elem;
