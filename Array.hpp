@@ -78,8 +78,7 @@ public:
         size_t i;
         arr = new Array<T, Dims...>[size];
         for(i=0; i< size; i++){
-            Array<U, Dims...> * tmp = new Array<U, Dims...>(array.arr[i]);
-            arr[i] = *tmp;
+            arr[i] = array.arr[i];
         }
     }
     Array &operator=(const Array &array){
