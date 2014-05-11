@@ -32,20 +32,14 @@ void test0(){
 }
 void test1() {
     cout << "test 1: "<< endl;
-    //size_t i;
     cs540::Array<int, 2, 3> a;
     cout << endl;
     a[1][1] = 2;
-    cout << a[1].ValueType.name()<<endl;
-    cout << a[1].ValueType.name()<<": "<<a[1][1]<<endl;
+    cout <<a[1][1]<<endl;
     cs540::Array<char, 2> b;
     b[1] = 'c';
     cs540::Array<char, 2> c(b);
     cout << c[1]<<endl;
-    //cout << typeid(a[1][1]).name()<<endl;
-    //cout<< a[1][2][3];
-    //cs540::ArrayArray<int> *c = &((*b)[1]);
-    //(*c)[1];
     a[0][0] = 100;
     a[0][1] = 123;
     cs540::Array<int, 2, 3> d = a;

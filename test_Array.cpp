@@ -14,6 +14,8 @@ using cs540::Array;
 using cs540::OutOfRange;
 
 
+//#define TEST_CI_ASSIGN 1
+//#define TEST_CR_ASSGN 1
 
 template <typename T1, typename T2, size_t N>
 void assert_equal(const Array<T1, N> &a1, const T2 (&a2)[N]) {
@@ -191,8 +193,8 @@ int main() {
         /*
          * Test const FDM iterator.
          */
-/*
-        #if 0
+
+        #if 1
         {
             int i = 0;
             for (array_t::ConstFirstDimensionMajorIterator it = a1_cr.fmbegin(); it != a1_cr.fmend(); ++it) {
@@ -200,7 +202,6 @@ int main() {
                 assert(t == a[i++]);
             }
             assert(i == 3);
-
             // Can compare.
             assert(a1_cr.fmbegin() == a1_cr.fmbegin());
             assert(a1_cr.fmbegin() != ++a1_cr.fmbegin());
@@ -225,10 +226,15 @@ int main() {
             // Cannot assign to pointee.
             #ifdef TEST_CI_ASSIGN
                 *a1_cr.fmbegin() = 1;
+            /*cout << typeid(a1_cr).name()<<endl;
+            cout << typeid(a1_cr.fmbegin()).name()<<endl;
+            cout << typeid(*a1_cr.fmbegin()).name()<<endl;
+            cs540::throwOutOfRangeException();
+             */
             #endif
         }
         #endif
-*/
+
  
     }
 
@@ -367,7 +373,7 @@ int main() {
          * Test const FDM iterator.
          */
 
-        #if 0
+        #if 1
         {
             int i = 0;
             for (array_t::ConstFirstDimensionMajorIterator it = a1_cr.fmbegin(); it != a1_cr.fmend(); ++it) {
@@ -601,7 +607,7 @@ int main() {
          * Test const FDM iterator.
          */
 
-        #if 0
+        #if 1
         {
             size_t i = 0;
             // Cheat.
@@ -611,8 +617,9 @@ int main() {
                 assert(t == ap[i++]);
             }
             // Make sure it actually did it.
+            cout << "i == N: "<< i << " ?= "<< N <<endl;
             assert(i == N);
-
+            
             // Can compare.
             assert(a1_cr.fmbegin() == a1_cr.fmbegin());
             assert(a1_cr.fmbegin() != ++a1_cr.fmbegin());
@@ -772,7 +779,7 @@ int main() {
     for (auto it = a3.lmbegin(); it != a3.lmend(); ++it) {
         cout << *it << endl;
     }
-/*
+
     {
         const Array<int, 2, 3, 4> &const_a3(a3);
         cout << "FDM by const iterator" << endl;
@@ -780,7 +787,35 @@ int main() {
             cout << *it << endl;
         }
     }
-*/
+
     Array<double, 2, 3, 4> da(a3);
     da = a3;
+
+    {
+        Array<int, 10> a_d1;
+        for(int t=0;t<10; t++){
+            a_d1[t] = t;
+        }
+        int t = 0;
+        const Array<int, 10> ca_d1(a_d1);
+        for(auto it = ca_d1.fmbegin(); it!=ca_d1.fmend(); it++){
+            assert((*it) == t );
+            t++;
+        }
+        assert(t == 10);
+        t = 0;
+        for(auto it = ca_d1.lmbegin(); it!=ca_d1.lmend(); it++){
+            assert((*it) == t );
+            t++;
+        }
+        assert(t == 10);
+        a_d1.getNextDimension(2)=10;
+        assert(a_d1[2] == 10);
+    #ifdef TEST_CR_ASSGN
+        ca_d1.getNextDimension(2)=10;
+    #endif
+        
+
+        
+    }
 }
