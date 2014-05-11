@@ -33,23 +33,36 @@ void test0(){
 void test1() {
     cout << "test 1: "<< endl;
     cs540::Array<int, 2, 3> a;
-    cout << endl;
-    a[1][1] = 2;
-    cout <<a[1][1]<<endl;
+    int t=0;
+    for(int i=0;i<2; i++){
+        for(int j=0; j<3; j++){
+            a[i][j] = t++;
+        }
+    }
+    t = 0;
+    for(int i=0; i<2; i++){
+        for(int j=0; j<3; j++){
+            assert(a[i][j] == t);
+            t++;
+        }
+    }
     cs540::Array<char, 2> b;
+    b[0] = 'i';
     b[1] = 'c';
     cs540::Array<char, 2> c(b);
-    cout << c[1]<<endl;
-    a[0][0] = 100;
-    a[0][1] = 123;
+    assert(c[0]=='i');
+    assert(c[1]=='c');
     cs540::Array<int, 2, 3> d = a;
-    d[0][0] = 999;
+    d[0][0] = 90;
     assert(d[0][0]!=a[0][0]);
     auto iter1 = a.fmbegin();
     auto iter2 = a.fmend();
     assert (iter1 != iter2);
+    t = 0;
     for(auto iter3=a.fmbegin(); iter3!=a.fmend(); iter3++){
         cout << *iter3 <<" ";
+        assert(t == *iter3);
+        t++;
     }
     cout << endl;
     for(auto iter3=a.lmbegin(); iter3!=a.lmend(); iter3++){
@@ -59,6 +72,7 @@ void test1() {
     for(auto iter3=d.fmbegin(); iter3!=d.fmend(); iter3++){
         cout << *iter3 <<" ";
     }
+    cout << endl;
 }
 void test2(){
     cout << "test 2: "<< endl;
@@ -66,18 +80,16 @@ void test2(){
     cs540::Array<int, 2, 3, 4> a, b;
     cs540::Array<short, 2, 3, 4> c;
     //cs540::Array<int, 0> e1; // This line must cause a compile-time error.
-    
+    for(int i=0; i<2; i++){
+        for(int j=0; j<3; j++){
+            for(int k=0; k<4; k++){
+                a[i][j][k] = i*100+j*10+k;
+            }
+        }
+    }
     // Range-checked indexing.
-    a[0][0][0] = 1234;
-    a[0][0][3] = 3;
     a[1][1][1] = a[0][0][0];
-    a[1][0][3] = 103;
     a[0][2][3] = 5678; // Set the element in the first plane, 3rd row, and 4th column.
-    a[1][1][3] = 113;
-    a[1][2][1] = 121;
-    a[1][0][0] = 110;
-    a[1][0][1] = 101;
-    a[0][0][1] = 1;
     
     try{
         a[0][3][0] = 1; // Out of range, throws.
@@ -89,7 +101,6 @@ void test2(){
     a = a; // Self-assignment must be a no-op.
     b = a; // Okay, as long as dimensions and type match exactly.
     a = c; // Member template constructor.
-    //cout << "~~~here2"<<endl;
     
     const cs540::Array<int, 2, 3, 4> &const_ref(a);
     
@@ -118,42 +129,28 @@ void test2(){
 }
 void test3(){
     cs540::Array<int, 2, 3, 2> a, b;
-    a[0][0][0] = 0;
-    a[0][0][1] = 1;
-    a[0][1][0] = 2;
-    a[0][1][1] = 3;
-    a[0][2][0] = 4;
-    a[0][2][1] = 5;
-    a[1][0][0] = 6;
-    a[1][0][1] = 7;
-    a[1][1][0] = 8;
-    a[1][1][1] = 9;
-    a[1][2][0] = 10;
-    a[1][2][1] = 11;
-    
-    b[0][0][0] = 0;
-    b[1][0][0] = 1;
-    b[0][1][0] = 2;
-    b[1][1][0] = 3;
-    b[0][2][0] = 4;
-    b[1][2][0] = 5;
-    b[0][0][1] = 6;
-    b[1][0][1] = 7;
-    b[0][1][1] = 8;
-    b[1][1][1] = 9;
-    b[0][2][1] = 10;
-    b[1][2][1] = 11;
-    int i=0;
+    int t = 0;
+    for(int i=0; i<2; i++){
+        for(int j=0; j<3; j++){
+            for(int k=0; k<2; k++){
+                a[i][j][k] = t;
+                b[k][j][i] = t;
+                t++;
+                
+            }
+        }
+    }
+    t=0;
     for(auto it = a.fmbegin(); it != a.fmend(); ++it){
-        assert(*it == i);
-        i++;
+        assert(*it == t);
+        t++;
          
     }
     
-    i=0;
+    t=0;
     for(auto it = b.lmbegin(); it != b.lmend(); ++it){
-        assert(*it == i);
-        i++;
+        assert(*it == t);
+        t++;
     }
 }
 int main(){
